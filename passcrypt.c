@@ -8,6 +8,11 @@ int main() {
 int n = 3;
 unsigned char salt = 'xx';  
 char hashPass[12];
+char user[32];
+char userid[32]; //this can all be simplified by storing pass in a variable but how do you do that?
+char pass[12];
+char newPass[12];
+
 
 loginUser();
 
@@ -17,24 +22,27 @@ loginUser();
 }
 else {
 	if (strcmp(user,userid) != 0) {	
+		
 		loginPass();							
 		
 		//convert password to hash value, add the salt value and store in hashPass
+		append(pass, salt)
 		
 		SHA256_CTX context;
  		unsigned char md[SHA256_DIGEST_LENGTH];
  		 					
- 		hashPass = hash(hashPass+salt);
+ 		hashPass = hash(pass)
  					
  		SHA256_Init(&context);
  		SHA256_Update(&context, (unsigned char*)hashPass, length);
  		SHA256_Final(md, &context);
 		
-		//store into unix database			
 		
-	 	while (n >= 0;) {			
+		//compares hash to stored hash
+		
+	 	while (n >= 0;) {							//the if statement below may not work properly
 			n--;		
-			if (strcmp(pass,hashedPass) != 0) {
+			if (strcmp(pass,hashedPass) != 0) {					
 				printf("Success! You've been logged in.");
 				break; //exits this if statement
 			}
@@ -50,6 +58,18 @@ else {
 				
 				//store userid into the unix database cell
 				
+					//store into unix database	
+					FILE *f = fopen("passwd.txt", "w");
+					if (f == NULL)
+				{
+					printf("Error opening file!\n");
+					exit(1);
+				}
+				
+				/* print userid */
+				const char *text = userid;
+				fprintf(f, "credential %s/n", text);
+				
 				}
 				else {
 				printf("Username fails requirements! Try again.");
@@ -62,16 +82,30 @@ else {
 				{
 					//convert password to hash value, add the salt value and store in hashPass
 					
+					append(pass, salt)
 					SHA256_CTX context;
  					unsigned char md[SHA256_DIGEST_LENGTH];
  					
- 					hashPass = hash(newPass+salt);
+ 					hashPass = hash(pass)
  					
  					SHA256_Init(&context);
  					SHA256_Update(&context, (unsigned char*)hashPass, length);
  					SHA256_Final(md, &context);
 					
 					//store hashPass in unix database
+					
+					//store into unix database	
+					FILE *f = fopen("passwd.txt", "w");
+					if (f == NULL)
+				{
+					printf("Error opening file!\n");
+					exit(1);
+				}
+				
+				/* print pass */
+				const char *text = hashPass;
+				fprintf(f, "%s/n", text);
+		
 					
 				}
 				else { 															//indicates special characters
@@ -89,44 +123,36 @@ return 0;
 
 
 static void passwordRequest(void) {
-char newPass[12];
 printf("Enter a password. Must include lowercase, uppercase, numbers but NO special characters:");
 scanf("%s/n", newPass);
 }
 
 static void userRequest(void) {
-char userid[32]; //this can all be simplified by storing pass in a variable but how do you do that?
 printf("Enter a username. Must be less than 32 characters, greater than 3");
 scanf("%s/n", userid);
 }
 
 static void loginUser(void) {
-char user[32];
 printf("Enter a username:");
 scanf("%s/n", user);
 }
 
 static void loginPass(void) {
-char pass[12];
 printf("Enter a password:");
 scanf("%s/n", pass);
 }
 
-/*
+void append(char* s, char c) {
+        int len = strlen();
+        s[len] = c;
+        s[len+1] = '\0';
+}
 
-man crunch
- 
- run the crunch with specific criteria for the specifications for the password given
- in the program.
- 
- use John the ripper a password cracker using the unix input
- 
- $ John
- 
- - use the right functions in task 7 to crack it
- - answer the questions
-
-*/
+void append(char *s, char c) {
+        int len = strlen();
+        s[len] = c;
+        s[len+1] = c;
+}
 
 
 
